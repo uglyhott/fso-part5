@@ -23,6 +23,7 @@ const App = () => {
     if (loggedUser) {
       const user = JSON.parse(loggedUser)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -31,7 +32,6 @@ const App = () => {
     try {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedInBlogAppUser', JSON.stringify(user))
-      debugger
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -54,7 +54,6 @@ const App = () => {
       author,
       url
     }
-    debugger
     const returnedBlog = await blogService.create(newBlog)
     setBlogs(blogs.concat(returnedBlog))
     setAuthor('')
