@@ -1,0 +1,36 @@
+html {
+    background-color: #98b4f4;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+}
+
+h2,
+h3 {
+    font-style: italic;
+    border-bottom: 2px dotted black;
+}
+
+.notification,
+.error {
+    margin: 0 auto 10px auto;
+    text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    color: #f4ed98;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.notification {
+    border: 3px solid #1072dc;
+    background-color: #1072dc;
+}
+
+.error {
+    border: 3px solid #e46249;
+    background-color: #e46249;
+}
