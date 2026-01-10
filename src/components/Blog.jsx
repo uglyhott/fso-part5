@@ -1,12 +1,25 @@
 import { useState } from "react"
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateLikes}) => {
   const [visible, setVisible] = useState(false)
   const [buttonText, setButtonText] = useState('view')
+  const [likes, setLikes] = useState(blog.likes)
   
   const handleClick = () => {
     setButtonText(buttonText === 'view' ? 'hide' : 'view')
     setVisible(buttonText === 'view' ? true : false)
+  }
+  
+  const handleLikes = () => {
+    setLikes(likes + 1)
+    const updatedBlog = {
+      likes: likes + 1,
+      url: blog.url,
+      author: blog.author,
+      title: blog.title,
+      user: blog.user.id
+    }
+    updateLikes(blog.id, updatedBlog)
   }
   
   const blogStyle = {
@@ -23,8 +36,9 @@ const Blog = ({ blog }) => {
       <button onClick={handleClick}>{buttonText}</button>
       {visible && (
         <div>
-         <div><a>{blog.url}</a></div>
-         <div>likes {blog.likes} <button>like</button></div>
+          <div><a>{blog.url}</a></div>
+          <div>likes {likes} <button onClick={handleLikes}>like</button></div>
+          <div>{blog.user.name}</div>
         </div>
       )}
     </div>  

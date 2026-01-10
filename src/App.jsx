@@ -13,12 +13,14 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState(null)
   const [error, setError] = useState(false)
+  const [blogChanged, setBlogChanged] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
     )  
-  }, [])
+    setBlogChanged(false)
+  }, [blogChanged])
 
   useEffect(() => {
     const loggedUser = window.localStorage.getItem('loggedInBlogAppUser')
@@ -62,6 +64,20 @@ const App = () => {
         setMessage(null)
       }, 5000)
       setBlogs(blogs.concat(returnedBlog))
+    } catch (error) {
+      setError(true)
+      setMessage(error.message)
+      setTimeout(() => {
+        setMessage(null)
+        setError(false)
+      }, 5000)
+    }
+  }
+
+  const handleLikes = async (id, likedBlog) => {
+    try {
+      blogService.like(id, likedBlog)
+      setBlogChanged(true)
     } catch (error) {
       setError(true)
       setMessage(error.message)
@@ -116,7 +132,7 @@ const App = () => {
   const blogList = () => {
     return (
       blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateLikes={handleLikes}/>
       )
     )
   }
