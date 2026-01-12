@@ -13,7 +13,7 @@ const getAll = () => {
 
 const create = async newObject => {
   const config = {
-    headers: { authorization: token}, 
+    headers: { authorization: token },
   }
   const response = await axios.post(baseUrl, newObject, config)
   return response.data
@@ -22,7 +22,7 @@ const create = async newObject => {
 const like = async (id, likedBlog) => {
   const response = await axios.put(`${baseUrl}/${id}`, likedBlog)
   return response.data
-} 
+}
 
 const removeBlog = async (id) => {
   const config = {

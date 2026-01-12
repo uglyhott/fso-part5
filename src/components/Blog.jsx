@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const Blog = ({ blog, user, updateLikes, removeBlog }) => {
   const [visible, setVisible] = useState(false)
@@ -6,12 +6,12 @@ const Blog = ({ blog, user, updateLikes, removeBlog }) => {
   const [likes, setLikes] = useState(blog.likes)
 
   const isUser = blog.user.name === user.name
-  
+
   const handleClick = () => {
     setButtonText(buttonText === 'view' ? 'hide' : 'view')
     setVisible(buttonText === 'view' ? true : false)
   }
-  
+
   const handleLikes = () => {
     setLikes(likes + 1)
     const updatedBlog = {
@@ -23,13 +23,13 @@ const Blog = ({ blog, user, updateLikes, removeBlog }) => {
     }
     updateLikes(blog.id, updatedBlog)
   }
-  
+
   const onClickRemove = () => {
     if (window.confirm(`Remove ${blog.title} by ${blog.author}?`)) {
       removeBlog(blog.id)
     }
   }
-  
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -40,7 +40,7 @@ const Blog = ({ blog, user, updateLikes, removeBlog }) => {
 
   return (
     <div style={blogStyle}>
-     {blog.title} {blog.author}
+      {blog.title} {blog.author}
       <button onClick={handleClick}>{buttonText}</button>
       {visible && (
         <div>
@@ -53,7 +53,7 @@ const Blog = ({ blog, user, updateLikes, removeBlog }) => {
           }
         </div>
       )}
-    </div>  
+    </div>
   )
 }
 

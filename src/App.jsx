@@ -6,6 +6,8 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 
+let didInit = false // avoid running twice in development
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
@@ -13,21 +15,21 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState(null)
   const [error, setError] = useState(false)
-  const [blogChanged, setBlogChanged] = useState(false)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs.sort((a,b) => b.likes - a.likes))
-    )  
-    setBlogChanged(false)
-  }, [blogChanged])
+    blogService.getAll().then(blogs => setBlogs(blogs))
+  }, [])
 
   useEffect(() => {
-    const loggedUser = window.localStorage.getItem('loggedInBlogAppUser')
-    if (loggedUser) {
-      const user = JSON.parse(loggedUser)
-      setUser(user)
-      blogService.setToken(user.token)
+    if (!didInit) {
+      didInit = true
+      const loggedUser = window.localStorage.getItem('loggedInBlogAppUser')
+      if (loggedUser) {
+        const user = JSON.parse(loggedUser)
+        // eslint-disable-next-line  react-hooks/set-state-in-effect -- Going off the example in the React docs and making sure the init is only once
+        setUser(user)
+        blogService.setToken(user.token)
+      }
     }
   }, [])
 
@@ -41,6 +43,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (error) {
+      console.error(error.message)
       setError(true)
       setMessage('Wrong Credentials')
       setTimeout(() => {
@@ -77,7 +80,7 @@ const App = () => {
   const handleLikes = async (id, likedBlog) => {
     try {
       blogService.like(id, likedBlog)
-      setBlogChanged(true)
+      setBlogs(blogs.map(blog => blog.id === id ? { ...blog, likes: likedBlog.likes } : blog))
     } catch (error) {
       setError(true)
       setMessage(error.message)
@@ -87,7 +90,7 @@ const App = () => {
       }, 5000)
     }
   }
-  
+
   const handleRemoveBlog = async (id) => {
     try {
       blogService.removeBlog(id)
@@ -95,7 +98,7 @@ const App = () => {
       setTimeout(() => {
         setMessage(null)
       }, 5000)
-      setBlogChanged(true)
+      setBlogs(blogs.filter(blog => blog.id !== id ))
     } catch (error) {
       setError(true)
       setMessage(error.message)
@@ -112,22 +115,26 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <h3>Log in to application</h3>
           <div>
+            <label>
             username
-            <input
-              type="text"
-              name='username'
-              value={username}
-              onChange={({ target }) => setUsername(target.value)}
-            />
+              <input
+                type="text"
+                name='username'
+                value={username}
+                onChange={({ target }) => setUsername(target.value)}
+              />
+            </label>
           </div>
           <div>
+            <label>
             password
-            <input
-              type="text"
-              name='password'
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-            />
+              <input
+                type="text"
+                name='password'
+                value={password}
+                onChange={({ target }) => setPassword(target.value)}
+              />
+            </label>
           </div>
           <div>
             <button type="submit">Login</button>
@@ -136,7 +143,7 @@ const App = () => {
       </div>
     )
   }
-  
+
   const blogFormRef = useRef()
 
   const blogForm = () => {
@@ -147,30 +154,31 @@ const App = () => {
     )
   }
 
+  const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
   const blogList = () => {
     return (
-      blogs.map(blog =>
+      sortedBlogs.map(blog =>
         <Blog key={blog.id} blog={blog} updateLikes={handleLikes} user={user} removeBlog={handleRemoveBlog}/>
       )
     )
   }
 
   return (
-      <div>
+    <div>
       <h2>blogs</h2>
       <Notification message={message} isError={error}/>
       {user === null ?
         loginForm() :
         <div>
           <p>{user.name} logged in
-          <button type='button' onClick={handleLogout}>Logout</button>
+            <button type='button' onClick={handleLogout}>Logout</button>
           </p>
           {blogForm()}
           {blogList()}
         </div>
       }
     </div>
-  )  
+  )
 }
 
 export default App
