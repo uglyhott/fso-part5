@@ -87,6 +87,24 @@ const App = () => {
       }, 5000)
     }
   }
+  
+  const handleRemoveBlog = async (id) => {
+    try {
+      blogService.removeBlog(id)
+      setMessage('Blog removed')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+      setBlogChanged(true)
+    } catch (error) {
+      setError(true)
+      setMessage(error.message)
+      setTimeout(() => {
+        setMessage(null)
+        setError(false)
+      }, 5000)
+    }
+  }
 
   const loginForm = () => {
     return (
@@ -132,7 +150,7 @@ const App = () => {
   const blogList = () => {
     return (
       blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateLikes={handleLikes}/>
+        <Blog key={blog.id} blog={blog} updateLikes={handleLikes} user={user} removeBlog={handleRemoveBlog}/>
       )
     )
   }
