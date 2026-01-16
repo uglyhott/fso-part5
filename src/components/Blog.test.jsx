@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
-import { test } from 'vitest'
 
 const blog = {
   title: 'only this title shows up',
@@ -46,13 +45,13 @@ describe('Blog Component', () => {
 
   test('like button event handler is called the correct number of times', async () => {
     const mockLikeHandler = vi.fn()
-    
+
     render(<Blog blog={blog} user={testUser} updateLikes={mockLikeHandler}/>)
-    
+
     const user = userEvent.setup()
     const viewButton = screen.getByText('view')
     await user.click(viewButton)
-    
+
     const likeButton = screen.getByText('like')
     await user.click(likeButton)
     await user.click(likeButton)
